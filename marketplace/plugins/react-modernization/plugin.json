@@ -1,0 +1,9 @@
+{
+  "name": "react-modernization",
+  "description": "Modernize React apps: React 18->19 codemods, class->Hooks, TypeScript types, CRA->Vite. Skill, agent and guardrail hooks.",
+  "version": "1.0.0",
+  "author": { "name": "Platform Engineering" },
+  "skills": "skills/",
+  "agents": "agents/",
+  "hooks": "hooks.json"
+}

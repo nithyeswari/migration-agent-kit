@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "openrewrite": {
+      "command": "npx",
+      "args": ["@example/openrewrite-mcp", "--build-tool", "maven"],
+      "cwd": "${workspaceFolder}"
+    },
+    "build-runner": {
+      "command": "npx",
+      "args": ["@example/build-mcp", "--allow", "mvnw,gradlew"],
+      "cwd": "${workspaceFolder}"
+    }
+  }
+}

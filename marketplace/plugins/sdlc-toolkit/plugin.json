@@ -1,0 +1,9 @@
+{
+  "name": "sdlc-toolkit",
+  "description": "Cross-cutting SDLC automation: peer-review and sdlc-workflow skills plus Jira (Atlassian) and GitHub MCP servers. Works alongside any migration plugin.",
+  "version": "1.0.0",
+  "author": { "name": "Platform Engineering" },
+  "skills": "skills/",
+  "agents": "agents/",
+  "mcpServers": ".mcp.json"
+}

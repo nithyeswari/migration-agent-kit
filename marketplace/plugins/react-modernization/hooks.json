@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "editFiles|runCommands",
+        "hooks": [
+          { "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/guard-allowed-paths.sh" }
+        ]
+      }
+    ]
+  }
+}

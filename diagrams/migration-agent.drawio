@@ -1,0 +1,127 @@
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram name="Quarkus Migration Agent" id="mig-agent">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1250" pageHeight="870" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Plugin outer container -->
+        <mxCell id="plugin" value="Plugin: quarkus-migration  —  one installable bundle (plugin.json). Ships the skill, agent, MCP tools and guardrail hooks together." style="rounded=1;dashed=1;dashPattern=6 4;fillColor=#F5EFE6;strokeColor=#C7603F;fontColor=#5a3a2c;align=left;verticalAlign=top;spacingLeft=14;spacingTop=10;fontSize=12;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="1200" height="830" as="geometry" />
+        </mxCell>
+
+        <!-- Config layer -->
+        <mxCell id="cfg" value="config/migration.yaml  —  the single place every knob lives:  model · loop (max_iterations, stop_when) · which tools are enabled · guardrails · prompts" style="rounded=1;fillColor=#1F3A5F;strokeColor=#13263d;fontColor=#ffffff;fontSize=12;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="60" y="70" width="1140" height="56" as="geometry" />
+        </mxCell>
+
+        <!-- Agent -->
+        <mxCell id="agent" value="AGENT&#10;quarkus-migrator&#10;&#10;Persona + bounded tool set&#10;(agents/quarkus-migrator.agent.md&#10;= config: agent.*)" style="rounded=1;fillColor=#2E7D8F;strokeColor=#1f5560;fontColor=#ffffff;fontSize=12;fontStyle=0;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="60" y="170" width="240" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- Outcome -->
+        <mxCell id="outcome" value="Outcome&#10;Migrated module + migration summary&#10;(changed deps, recipe output, manual fixes)" style="rounded=1;fillColor=#eef6f1;strokeColor=#3B6D11;fontColor=#27500a;fontSize=11;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="60" y="380" width="240" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Harness container -->
+        <mxCell id="harness" value="HARNESS  (harness/agent_loop.py)" style="rounded=1;fillColor=#ffffff;strokeColor=#888780;fontColor=#444441;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=12;fontStyle=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="340" y="160" width="480" height="410" as="geometry" />
+        </mxCell>
+
+        <!-- Loop nodes -->
+        <mxCell id="think" value="1. THINK&#10;ask the model what to do&#10;(llm.py)" style="rounded=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontColor=#0c447c;fontSize=11;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="370" y="205" width="180" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="act" value="2. ACT&#10;run the tool calls it returned" style="rounded=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontColor=#0c447c;fontSize=11;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="610" y="205" width="180" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="observe" value="3. OBSERVE&#10;feed tool results back to model" style="rounded=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontColor=#0c447c;fontSize=11;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="610" y="305" width="180" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="check" value="4. STOP?&#10;tests_green / max_iter / done" style="rounded=1;fillColor=#E6F1FB;strokeColor=#185FA5;fontColor=#0c447c;fontSize=11;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="370" y="305" width="180" height="56" as="geometry" />
+        </mxCell>
+
+        <!-- Guardrails gate inside harness -->
+        <mxCell id="guard" value="GUARDRAILS GATE  (runs before EVERY tool)&#10;allowed_paths · deny list · human approval · redact secrets" style="rounded=1;fillColor=#C7603F;strokeColor=#8f3f26;fontColor=#ffffff;fontSize=11;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="430" y="420" width="320" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="skillnote" value="Skill: spring-to-quarkus (SKILL.md)&#10;procedure the THINK step loads on demand" style="rounded=1;fillColor=#EEEDFE;strokeColor=#534AB7;fontColor=#3c3489;fontSize=10;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="370" y="495" width="380" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Tools container -->
+        <mxCell id="tools" value="TOOLS  (harness/tools.py registry — toggle each one in config: agent.tools)" style="rounded=1;fillColor=#ffffff;strokeColor=#888780;fontColor=#444441;align=left;verticalAlign=top;spacingLeft=12;spacingTop=8;fontSize=12;fontStyle=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="340" y="600" width="480" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="t1" value="read_file" style="rounded=1;fillColor=#E1F5EE;strokeColor=#0F6E56;fontColor=#085041;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="360" y="640" width="210" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="t2" value="search_code" style="rounded=1;fillColor=#E1F5EE;strokeColor=#0F6E56;fontColor=#085041;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="590" y="640" width="210" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="t3" value="run_openrewrite  (recipes from config)" style="rounded=1;fillColor=#E1F5EE;strokeColor=#0F6E56;fontColor=#085041;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="360" y="688" width="210" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="t4" value="apply_patch" style="rounded=1;fillColor=#E1F5EE;strokeColor=#0F6E56;fontColor=#085041;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="590" y="688" width="210" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="t5" value="build_module" style="rounded=1;fillColor=#E1F5EE;strokeColor=#0F6E56;fontColor=#085041;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="360" y="736" width="210" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="t6" value="run_tests  (reports tests_green)" style="rounded=1;fillColor=#E1F5EE;strokeColor=#0F6E56;fontColor=#085041;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="590" y="736" width="210" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="t7" value="git_commit  —  human-approval gated" style="rounded=1;fillColor=#FAECE7;strokeColor=#993C1D;fontColor=#712b13;fontSize=11;fontStyle=2;" vertex="1" parent="1">
+          <mxGeometry x="360" y="784" width="440" height="34" as="geometry" />
+        </mxCell>
+
+        <!-- Right column externals -->
+        <mxCell id="src" value="Spring Boot module&#10;(SOURCE)" style="rounded=1;fillColor=#F1EFE8;strokeColor=#5F5E5A;fontColor=#2c2c2a;fontSize=11;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="880" y="200" width="180" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="tgt" value="Quarkus 3.x / Java 21&#10;(TARGET)" style="rounded=1;fillColor=#EAF3DE;strokeColor=#3B6D11;fontColor=#27500a;fontSize=11;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="880" y="300" width="180" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="audit" value="Audit trail&#10;JSONL, OTel-style fields&#10;audit/migration-trace.jsonl" style="rounded=1;fillColor=#1F3A5F;strokeColor=#13263d;fontColor=#ffffff;fontSize=11;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="880" y="420" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="mcp" value="MCP servers (.mcp.json)&#10;extra tools, same registry&#10;(OpenRewrite, build-runner)" style="rounded=1;fillColor=#FAEEDA;strokeColor=#854F0B;fontColor=#633806;fontSize=11;align=center;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="880" y="600" width="180" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Loop edges -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#185FA5;endArrow=block;" edge="1" parent="1" source="think" target="act"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#185FA5;endArrow=block;" edge="1" parent="1" source="act" target="observe"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#185FA5;endArrow=block;" edge="1" parent="1" source="observe" target="check"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" value="loop" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#185FA5;endArrow=block;fontColor=#185FA5;fontSize=10;" edge="1" parent="1" source="check" target="think"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Act -> guard -> tools -> observe -->
+        <mxCell id="e5" value="tool call" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#8f3f26;endArrow=block;fontColor=#8f3f26;fontSize=10;" edge="1" parent="1" source="act" target="guard"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" value="if allowed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#8f3f26;endArrow=block;fontColor=#8f3f26;fontSize=10;" edge="1" parent="1" source="guard" target="tools"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" value="results" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#0F6E56;endArrow=block;fontColor=#0F6E56;fontSize=10;exitX=1;exitY=0.2;entryX=0.5;entryY=1;" edge="1" parent="1" source="tools" target="observe"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Agent + skill feed think -->
+        <mxCell id="e8" value="persona + tools" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1f5560;endArrow=block;fontColor=#1f5560;fontSize=10;" edge="1" parent="1" source="agent" target="think"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#534AB7;endArrow=block;dashed=1;" edge="1" parent="1" source="skillnote" target="think"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Check -> outcome -->
+        <mxCell id="e10" value="stop met" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B6D11;endArrow=block;fontColor=#3B6D11;fontSize=10;" edge="1" parent="1" source="check" target="outcome"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Tools <-> code -->
+        <mxCell id="e11" value="reads" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#5F5E5A;endArrow=block;fontColor=#5F5E5A;fontSize=10;" edge="1" parent="1" source="tools" target="src"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e12" value="transforms" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#3B6D11;endArrow=block;fontColor=#3B6D11;fontSize=10;" edge="1" parent="1" source="tools" target="tgt"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e13" value="logs every decision" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#13263d;endArrow=block;dashed=1;fontColor=#13263d;fontSize=10;" edge="1" parent="1" source="guard" target="audit"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e14" value="adds tools" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#854F0B;endArrow=block;dashed=1;fontColor=#854F0B;fontSize=10;" edge="1" parent="1" source="mcp" target="tools"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Config configures everything (dashed) -->
+        <mxCell id="c1" value="configures" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1F3A5F;endArrow=open;dashed=1;fontColor=#1F3A5F;fontSize=9;" edge="1" parent="1" source="cfg" target="agent"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1F3A5F;endArrow=open;dashed=1;" edge="1" parent="1" source="cfg" target="harness"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#1F3A5F;endArrow=open;dashed=1;" edge="1" parent="1" source="cfg" target="tools"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

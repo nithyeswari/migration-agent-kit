@@ -1,0 +1,15 @@
+{
+  "name": "quarkus-migration-agent",
+  "version": "1.0.0",
+  "description": "Config-driven Spring Boot -> Quarkus migration agent (Node.js harness).",
+  "type": "module",
+  "bin": { "migrate": "./harness/agentLoop.js" },
+  "scripts": {
+    "migrate": "node harness/agentLoop.js --config config/migration.yaml"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.40.0",
+    "yaml": "^2.5.0"
+  }
+}

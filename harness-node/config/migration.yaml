@@ -1,0 +1,114 @@
+# =============================================================================
+# migration.yaml  —  the single place to change ANYTHING about the agent
+# -----------------------------------------------------------------------------
+# Nothing in harness/*.py is hard-coded. The loop, the model, the tool set,
+# the stopping rules, the guardrails and the prompts are all read from here.
+# Edit this file, not the code, to retune the agent.
+# =============================================================================
+
+# --- Which LLM drives the loop ------------------------------------------------
+model:
+  # Any messages-API model id. Swap freely:
+  #   claude-opus-4-8      -> strongest, best for gnarly migrations
+  #   claude-sonnet-4-6    -> balanced default
+  #   claude-haiku-4-5     -> cheapest, fine for mechanical recipe-driven work
+  id: "claude-sonnet-4-6"
+  max_tokens: 4096
+  temperature: 0.0            # deterministic edits; raise only for brainstorming
+  # The provider is pluggable. "anthropic" is the only one wired in harness/llm.py,
+  # but the registry pattern lets you add "openai", "bedrock", "vertex", etc.
+  provider: "anthropic"
+
+# --- The agent loop itself ----------------------------------------------------
+loop:
+  max_iterations: 25          # hard ceiling on think->act->observe cycles
+  stop_when:                  # loop ends as soon as ANY of these is true
+    - tests_green             # the test tool reported a passing build
+    - model_signalled_done    # model emitted no further tool calls
+    - max_iterations_reached
+  # If a tool errors, should the loop feed the error back to the model (self-heal)
+  # or abort? Self-heal is what makes it "agentic" rather than a fixed pipeline.
+  on_tool_error: "feed_back"  # "feed_back" | "abort"
+  checkpoint_every: 1         # persist state every N iterations (resume support)
+
+# --- The agent persona --------------------------------------------------------
+# This is the "custom agent" in Copilot terms: a persona + a bounded tool set.
+agent:
+  name: "quarkus-migrator"
+  # The system prompt is a template; {placeholders} are filled from this file.
+  system_prompt: |
+    You are {agent_name}, a senior migration engineer converting a Spring Boot
+    module to Quarkus {quarkus_version} on Java {java_version}.
+
+    Operating rules (non-negotiable):
+    - Work ONLY inside the allowed paths. Never touch files outside them.
+    - Prefer OpenRewrite recipes for mechanical changes; hand-edit only what
+      recipes cannot express.
+    - After every change set, build and run the tests before continuing.
+    - Make the smallest change that moves the build forward. No speculative
+      refactors.
+    - When the tests are green and the module builds, stop and summarise.
+
+    You may call the available tools. Think step by step about which tool to use.
+
+  # Only these tools are exposed to this agent. Toggle them on/off here.
+  # Each name must exist in harness/tools.py's registry.
+  tools:
+    - read_file
+    - search_code
+    - run_openrewrite
+    - apply_patch
+    - build_module
+    - run_tests
+    - git_commit          # gated by guardrails below
+    # - git_push          # deliberately commented out: see guardrails
+
+# --- The tools (the harness reads these to configure each one) ----------------
+tools:
+  run_openrewrite:
+    build_tool: "maven"     # "maven" | "gradle"
+    # The external recipe jar the recipes below live in. Passed to the plugin as
+    # -Drewrite.recipeArtifactCoordinates so no pom.xml edit is needed.
+    recipe_artifact_coordinates: "org.openrewrite.recipe:rewrite-spring-to-quarkus:RELEASE"
+    recipes:                # ordered; add/remove freely. See skill recipes.md
+      - org.openrewrite.quarkus.spring.SpringBootToQuarkus
+    dry_run_first: true     # always preview the diff before applying
+  build_module:
+    command: "./mvnw -q -DskipTests package"
+  run_tests:
+    command: "./mvnw -q test"
+    success_pattern: "BUILD SUCCESS"
+  git_commit:
+    message_template: "chore(migration): {summary}"
+
+# --- Guardrails (the harness enforces these BEFORE any tool runs) -------------
+# In a regulated context these are the difference between a tool and a liability.
+guardrails:
+  allowed_paths:
+    - "src/main/java"
+    - "src/test/java"
+    - "pom.xml"
+    - "src/main/resources"
+  # Tools that mutate remote/shared state always need a human to approve.
+  require_human_approval:
+    - git_commit
+    - git_push
+  # Tools that may NEVER run, regardless of what the model asks for.
+  deny:
+    - shell_arbitrary
+    - network_egress
+  redact_secrets: true      # scrub tokens/keys from prompts and audit log
+
+# --- Target / source facts the prompt template fills in -----------------------
+project:
+  java_version: "21"
+  quarkus_version: "3.x"
+  module_path: "."          # the Spring Boot module to migrate
+
+# --- Observability (maps to your Dynatrace/audit needs) -----------------------
+audit:
+  enabled: true
+  format: "json"            # one JSON line per tool call + decision
+  path: "./audit/migration-trace.jsonl"
+  # OTel-style fields so it drops straight into your existing log explorer
+  fields: [timestamp, iteration, tool, args_hash, decision, outcome, approver]

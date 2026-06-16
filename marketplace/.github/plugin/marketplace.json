@@ -1,0 +1,31 @@
+{
+  "name": "platform-eng-plugins",
+  "owner": {
+    "name": "Platform Engineering",
+    "email": "platform-eng@example.com"
+  },
+  "metadata": {
+    "description": "Internal Copilot plugin registry",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "quarkus-migration",
+      "description": "Spring Boot to Quarkus migration (official migrate-spring-to-quarkus skill + Quarkus framework-dev skills, Apache-2.0; see ATTRIBUTION.md) plus agent and OpenRewrite reference.",
+      "version": "1.2.0",
+      "source": "./plugins/quarkus-migration"
+    },
+    {
+      "name": "react-modernization",
+      "description": "Modernize React apps: 18->19 codemods, class->Hooks, CRA->Vite. Skill + agent.",
+      "version": "1.0.0",
+      "source": "./plugins/react-modernization"
+    },
+    {
+      "name": "sdlc-toolkit",
+      "description": "Peer review + Jira/GitHub lifecycle automation via Atlassian & GitHub MCP. Use alongside either migration plugin.",
+      "version": "1.0.0",
+      "source": "./plugins/sdlc-toolkit"
+    }
+  ]
+}
