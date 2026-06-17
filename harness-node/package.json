@@ -5,7 +5,9 @@
   "type": "module",
   "bin": { "migrate": "./harness/agentLoop.js" },
   "scripts": {
-    "migrate": "node harness/agentLoop.js --config config/migration.yaml"
+    "migrate": "node harness/agentLoop.js --config config/migration.yaml",
+    "migrate:openrewrite": "node scripts/openrewrite-migrate.js",
+    "migrate:openrewrite:apply": "node scripts/openrewrite-migrate.js --apply"
   },
   "engines": { "node": ">=20" },
   "dependencies": {
