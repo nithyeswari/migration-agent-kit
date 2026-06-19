@@ -19,10 +19,19 @@ Always:
 - Load the `spring-to-quarkus` skill and follow its procedure.
 - Run OpenRewrite recipes before hand-editing.
 - After each change set: build, then run tests. Fix the first failure only.
+- Apply Governed Logging to every service you add or migrate: once it is a
+  working Quarkus service, load the `apply-governed-logging` skill and follow it
+  (add `logging-starter`, set `app.logging.redaction.policy=strict` and
+  `formatter=ecs-json`, wire Tier 2 events only at real audit/security/business
+  points). This is the `logging` module of the migration flow and runs ALWAYS.
 - Stay inside src/ and pom.xml. Never edit CI, secrets, or infra files.
 - When the build passes and tests are green, stop and produce a migration
-  summary: changed dependencies, recipe output, and any manual fixes.
+  summary: changed dependencies, recipe output, manual fixes, and the Governed
+  Logging changes (incl. any deferred audit-event codes awaiting Compliance).
 
 Never:
 - Push to a remote or open a PR without explicit human approval.
 - Run shell commands outside the allow-listed build/test commands.
+- Set `app.logging.redaction.policy=off` outside a test profile, or invent new
+  audit/security/business event codes — those need a `logging-events` PR and
+  Compliance review; leave a TODO and report it instead.

@@ -83,11 +83,12 @@ After the user has chosen a strategy, check if the target project is a git repos
 | [frontend](modules/frontend.md) | Thymeleaf/JSP templates in `templates/` or static resources in `static/`                                                  | **PASS** if view layer found; **SKIP** otherwise                                         |
 | [testing](modules/testing.md)   | Spring test annotations in test sources (`@SpringBootTest`, `@WebMvcTest`, `@MockBean`)                                   | **PASS** if Spring tests found; **SKIP** otherwise                                       |
 | [cleanup](modules/cleanup.md)   | Leftover Spring artifacts after all other modules                                                                          | **ALWAYS** — runs after all other modules                                                |
+| [logging](modules/logging.md)   | Service is now Quarkus (Quarkus BOM + extension present) on Java 21+                                                       | **ALWAYS** — applies Governed Logging to every migrated service; SKIP only if not Quarkus |
 
 ### Execution Protocol
 
 ```
-FOR module IN [build, code, frontend, testing, cleanup]:
+FOR module IN [build, code, frontend, testing, cleanup, logging]:
 
   1. EVALUATE — inspect the project for the gate condition
   2. DECIDE
@@ -158,6 +159,7 @@ Present the review as a structured report:
 | code | ... | ... |
 | frontend | ... | ... |
 | testing | ... | ... |
+| logging | pom.xml or build.gradle(.kts), application.properties | governed-logging starter + appenders, redaction/formatter config, Tier 2 call sites |
 
 ### Validation Results
 | Check | Result | Notes |
